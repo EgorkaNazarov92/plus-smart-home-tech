@@ -1,6 +1,7 @@
 package ru.yandex.practicum.controller;
 
 import lombok.AllArgsConstructor;
+import ru.yandex.practicum.model.hub.HubEvent;
 import ru.yandex.practicum.model.sensor.SensorEvent;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,5 +19,10 @@ public class EventController {
 	@PostMapping("/sensors")
 	public void collectSensorEvent(@Valid @RequestBody SensorEvent event) {
 		eventService.addSensorEvent(event);
+	}
+
+	@PostMapping("/hubs")
+	public void collectHubEvent(@Valid @RequestBody HubEvent hubEvent) {
+		eventService.addHubEvent(hubEvent);
 	}
 }
