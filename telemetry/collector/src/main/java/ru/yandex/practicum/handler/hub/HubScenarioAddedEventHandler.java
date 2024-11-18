@@ -3,16 +3,15 @@ package ru.yandex.practicum.handler.hub;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.config.kafka.KafkaConfig;
 import ru.yandex.practicum.config.kafka.KafkaEventProducer;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
+import ru.yandex.practicum.grpc.telemetry.event.ScenarioAddedEventProto;
 import ru.yandex.practicum.handler.HubEventHandler;
 import ru.yandex.practicum.handler.common.HandlerHubEvent;
 import ru.yandex.practicum.kafka.telemetry.event.*;
-import ru.yandex.practicum.model.hub.HubEvent;
-import ru.yandex.practicum.model.hub.HubEventType;
-import ru.yandex.practicum.model.hub.ScenarioAddedEvent;
 
 import java.util.List;
 
-@HandlerHubEvent(HubEventType.SCENARIO_ADDED)
+@HandlerHubEvent(HubEventProto.PayloadCase.SCENARIO_ADDED)
 @Component
 public class HubScenarioAddedEventHandler extends HubEventHandler<ScenarioAddedEventAvro> {
 
@@ -21,8 +20,8 @@ public class HubScenarioAddedEventHandler extends HubEventHandler<ScenarioAddedE
 	}
 
 	@Override
-	protected ScenarioAddedEventAvro mapToAvro(HubEvent event) {
-		ScenarioAddedEvent hubEvent = (ScenarioAddedEvent) event;
+	protected ScenarioAddedEventAvro mapToAvro(HubEventProto event) {
+		ScenarioAddedEventProto hubEvent = event.getScenarioAdded();
 		return ScenarioAddedEventAvro.newBuilder()
 				.setName(hubEvent.getName())
 				.setActions(deviceActionAvros(hubEvent))
@@ -30,8 +29,8 @@ public class HubScenarioAddedEventHandler extends HubEventHandler<ScenarioAddedE
 				.build();
 	}
 
-	private List<DeviceActionAvro> deviceActionAvros(ScenarioAddedEvent event) {
-		return event.getActions().stream()
+	private List<DeviceActionAvro> deviceActionAvros(ScenarioAddedEventProto event) {
+		return event.getActionList().stream()
 				.map(action -> DeviceActionAvro.newBuilder()
 						.setSensorId(action.getSensorId())
 						.setType(ActionTypeAvro.valueOf(action.getType().name()))
@@ -40,13 +39,13 @@ public class HubScenarioAddedEventHandler extends HubEventHandler<ScenarioAddedE
 				.toList();
 	}
 
-	private List<ScenarioConditionAvro> getScenarioConditionAvros(ScenarioAddedEvent event) {
-		return event.getConditions().stream()
+	private List<ScenarioConditionAvro> getScenarioConditionAvros(ScenarioAddedEventProto event) {
+		return event.getConditionList().stream()
 				.map(condition -> ScenarioConditionAvro.newBuilder()
 						.setSensorId(condition.getSensorId())
 						.setType(ConditionTypeAvro.valueOf(condition.getType().name()))
 						.setOperation(ConditionOperationAvro.valueOf(condition.getOperation().name()))
-						.setValue(condition.getValue())
+						.setValue(condition.hasBoolValue() ? condition.getBoolValue() : condition.getIntValue())
 						.build())
 				.toList();
 	}

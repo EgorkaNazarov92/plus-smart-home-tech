@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.handler.HubEventHandler;
 import ru.yandex.practicum.handler.SensorEventHandler;
-import ru.yandex.practicum.model.hub.HubEventType;
-import ru.yandex.practicum.model.sensor.SensorEventType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +34,7 @@ public class CommonHandler {
 				.collect(Collectors.toMap(CommonHandler::getValueHub, h -> h));
 	}
 
-	private static SensorEventType getValueSensor(SensorEventHandler<?> handler) {
+	private static SensorEventProto.PayloadCase getValueSensor(SensorEventHandler<?> handler) {
 		HandlerSensorEvent handlerAnnotation = handler.getClass().getAnnotation(HandlerSensorEvent.class);
 		if (handlerAnnotation == null) {
 			throw new IllegalArgumentException("No annotation found for " + handler.getClass().getName());
@@ -42,7 +42,7 @@ public class CommonHandler {
 		return handlerAnnotation.value();
 	}
 
-	private static HubEventType getValueHub(HubEventHandler<?> handler) {
+	private static HubEventProto.PayloadCase getValueHub(HubEventHandler<?> handler) {
 		HandlerHubEvent handlerAnnotation = handler.getClass().getAnnotation(HandlerHubEvent.class);
 		if (handlerAnnotation == null) {
 			throw new IllegalArgumentException("No annotation found for " + handler.getClass().getName());
