@@ -1,21 +1,18 @@
 package ru.yandex.practicum.handler.hub.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.handler.hub.HubHandlerEvent;
-import ru.yandex.practicum.kafka.telemetry.event.DeviceActionAvro;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ScenarioAddedEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.ScenarioConditionAvro;
-import ru.yandex.practicum.model.Action;
-import ru.yandex.practicum.model.Condition;
-import ru.yandex.practicum.model.Scenario;
-import ru.yandex.practicum.model.types.ActionType;
-import ru.yandex.practicum.model.types.ConditionOperation;
-import ru.yandex.practicum.model.types.ConditionType;
-import ru.yandex.practicum.repository.ScenarioRepository;
-import ru.yandex.practicum.repository.SensorRepository;
+import ru.yandex.practicum.model.*;
+import ru.yandex.practicum.model.types.ScenarioActionId;
+import ru.yandex.practicum.model.types.ScenarioConditionId;
+import ru.yandex.practicum.repository.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -23,6 +20,11 @@ import java.util.List;
 public class ScenarioAddedHandler implements HubHandlerEvent {
 	private final ScenarioRepository scenarioRepository;
 	private final SensorRepository sensorRepository;
+	private final ConversionService conversionService;
+	private final ConditionRepository conditionRepository;
+	private final ScenarioConditionRepository scenarioConditionRepository;
+	private final ActionRepository actionRepository;
+	private final ScenarioActionRepository scenarioActionRepository;
 
 	@Override
 	public String getType() {
@@ -30,45 +32,50 @@ public class ScenarioAddedHandler implements HubHandlerEvent {
 	}
 
 	@Override
+	@Transactional
 	public void handle(HubEventAvro event) {
 		ScenarioAddedEventAvro addedEvent = (ScenarioAddedEventAvro) event.getPayload();
-		if (scenarioRepository.findByHubIdAndName(event.getHubId(), addedEvent.getName()).isEmpty()) {
-			Scenario scenario = Scenario.builder()
-					.hubId(event.getHubId())
-					.name(addedEvent.getName())
-					.conditions(getConditions(addedEvent.getConditions()))
-					.actions(getActions(addedEvent.getActions()))
+		Scenario scenario = Scenario.builder()
+				.hubId(event.getHubId())
+				.name(addedEvent.getName())
+				.build();
+		scenarioRepository.save(scenario);
+
+		List<Condition> conditions = new ArrayList<>();
+		List<ScenarioCondition> scenarioConditions = new ArrayList<>();
+
+		addedEvent.getConditions().forEach(scenarioConditionAvro -> {
+			Condition condition = conversionService.convert(scenarioConditionAvro, Condition.class);
+			assert condition != null;
+			conditions.add(condition);
+			ScenarioCondition scenarioCondition = ScenarioCondition.builder()
+					.id(new ScenarioConditionId())
+					.scenario(scenario)
+					.sensor(sensorRepository.findById(scenarioConditionAvro.getSensorId()).orElseThrow())
+					.condition(condition)
 					.build();
-			scenario.getConditions().forEach(condition -> condition.setScenario(scenario));
-			scenario.getActions().forEach(action -> action.setScenario(scenario));
-			scenarioRepository.save(scenario);
-		}
-	}
+			scenarioConditions.add(scenarioCondition);
+		});
+		conditionRepository.saveAll(conditions);
+		scenarioConditionRepository.saveAll(scenarioConditions);
 
-	private List<Condition> getConditions(List<ScenarioConditionAvro> avroConditions) {
-		return avroConditions.stream()
-				.map(condition -> Condition.builder()
-						.type(ConditionType.valueOf(condition.getType().name()))
-						.sensor(sensorRepository.findById(condition.getSensorId()).orElseThrow())
-						.operation(ConditionOperation.valueOf(condition.getOperation().name()))
-						.value(getIntValue(condition.getValue()))
-						.build())
-				.toList();
-	}
+		List<Action> actions = new ArrayList<>();
+		List<ScenarioAction> scenarioActions = new ArrayList<>();
 
-	private List<Action> getActions(List<DeviceActionAvro> avroActions) {
-		return avroActions.stream()
-				.map(action -> Action.builder()
-						.sensor(sensorRepository.findById(action.getSensorId()).orElse(null))
-						.type(ActionType.valueOf(action.getType().name()))
-						.value(action.getValue() == null ? 0 : action.getValue())
-						.build())
-				.toList();
-	}
+		addedEvent.getActions().forEach(deviceActionAvro -> {
+			Action action = conversionService.convert(deviceActionAvro, Action.class);
+			assert action != null;
+			actions.add(action);
+			ScenarioAction scenarioAction = ScenarioAction.builder()
+					.id(new ScenarioActionId())
+					.action(action)
+					.sensor(sensorRepository.findById(deviceActionAvro.getSensorId()).orElseThrow())
+					.scenario(scenario)
+					.build();
+			scenarioActions.add(scenarioAction);
+		});
 
-	private Integer getIntValue(Object value) {
-		if (value instanceof Integer) return (Integer) value;
-		else if (value instanceof Boolean) return (Boolean) value ? 1 : 0;
-		else return null;
+		actionRepository.saveAll(actions);
+		scenarioActionRepository.saveAll(scenarioActions);
 	}
 }

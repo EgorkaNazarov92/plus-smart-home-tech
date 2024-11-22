@@ -1,15 +1,11 @@
 package ru.yandex.practicum.model;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "sensors")
@@ -24,4 +20,12 @@ public class Sensor {
 	@NotBlank
 	@Column(name = "hub_id")
 	private String hubId;
+
+	@OneToMany(mappedBy = "sensor", fetch = FetchType.EAGER)
+	@ToString.Exclude
+	private Set<ScenarioCondition> scenarioConditions;
+
+	@OneToMany(mappedBy = "sensor", fetch = FetchType.EAGER)
+	@ToString.Exclude
+	private Set<ScenarioAction> scenarioActions;
 }

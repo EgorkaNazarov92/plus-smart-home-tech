@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.kafka.telemetry.event.*;
-import ru.yandex.practicum.model.Action;
-import ru.yandex.practicum.model.Condition;
-import ru.yandex.practicum.model.Scenario;
+import ru.yandex.practicum.model.*;
 import ru.yandex.practicum.model.types.ConditionOperation;
 import ru.yandex.practicum.repository.ScenarioRepository;
 import ru.yandex.practicum.service.ClientGrpc;
@@ -25,12 +23,14 @@ public class SnapshotHandler {
 		log.info("Processing snapshot for hubId: {}", hubId);
 		scenarioRepository.findByHubId(hubId).stream()
 				.filter(s -> checkScenario(s, snapshot))
-				.forEach(s -> send(s.getActions(), hubId));
+				.forEach(s -> send(s.getScenarioActions().stream()
+						.map(ScenarioAction::getAction)
+						.toList(), hubId));
 	}
 
 	private boolean checkScenario(Scenario scenario, SensorsSnapshotAvro snapshot) {
-		for (Condition condition : scenario.getConditions()) {
-			if (!checkCondition(condition, snapshot)) {
+		for (ScenarioCondition scenarioCondition : scenario.getScenarioCondition()) {
+			if (!checkCondition(scenarioCondition.getCondition(), snapshot)) {
 				return false;
 			}
 		}
@@ -38,7 +38,9 @@ public class SnapshotHandler {
 	}
 
 	private boolean checkCondition(Condition condition, SensorsSnapshotAvro snapshot) {
-		SensorStateAvro sensorState = snapshot.getSensorsState().get(condition.getSensor().getId());
+		ScenarioCondition scenarioCondition = condition.getScenarioConditions().getFirst();
+		SensorStateAvro sensorState = snapshot.getSensorsState()
+				.get(scenarioCondition.getSensor().getId());
 
 		if (sensorState == null) {
 			return false;

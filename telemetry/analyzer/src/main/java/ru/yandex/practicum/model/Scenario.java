@@ -2,10 +2,7 @@ package ru.yandex.practicum.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -26,8 +23,12 @@ public class Scenario {
 	@NotBlank
 	private String name;
 
-	@OneToMany(mappedBy = "scenario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	List<Condition> conditions;
-	@OneToMany(mappedBy = "scenario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	List<Action> actions;
+
+	@ToString.Exclude
+	@OneToMany(mappedBy = "scenario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private List<ScenarioAction> scenarioActions;
+
+	@ToString.Exclude
+	@OneToMany(mappedBy = "scenario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private List<ScenarioCondition> scenarioCondition;
 }

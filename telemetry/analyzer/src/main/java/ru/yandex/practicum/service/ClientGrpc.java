@@ -7,6 +7,7 @@ import ru.yandex.practicum.grpc.telemetry.event.DeviceActionProto;
 import ru.yandex.practicum.grpc.telemetry.event.DeviceActionRequest;
 import ru.yandex.practicum.grpc.telemetry.hubrouter.HubRouterControllerGrpc;
 import ru.yandex.practicum.model.Action;
+import ru.yandex.practicum.model.ScenarioAction;
 
 @Service
 public class ClientGrpc {
@@ -21,7 +22,9 @@ public class ClientGrpc {
 		DeviceActionRequest actionRequest = DeviceActionRequest.newBuilder()
 				.setHubId(hubId)
 				.setAction(DeviceActionProto.newBuilder()
-						.setSensorId(action.getSensor().getId())
+						.setSensorId(action.getScenarioActions().stream()
+								.map(ScenarioAction::getSensor)
+								.findFirst().get().getId())
 						.setType(ActionTypeProto.valueOf(action.getType().name()))
 						.setValue(action.getValue())
 						.build())

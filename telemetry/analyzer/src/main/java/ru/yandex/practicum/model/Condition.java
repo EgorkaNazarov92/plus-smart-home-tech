@@ -1,13 +1,11 @@
 package ru.yandex.practicum.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.yandex.practicum.model.types.ConditionOperation;
 import ru.yandex.practicum.model.types.ConditionType;
+
+import java.util.List;
 
 @Entity
 @Table(name = "conditions")
@@ -28,10 +26,7 @@ public class Condition {
 
 	private Integer value;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Scenario scenario;
-
-	@NotBlank
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Sensor sensor;
+	@OneToMany(mappedBy = "condition", fetch = FetchType.EAGER)
+	@ToString.Exclude
+	private List<ScenarioCondition> scenarioConditions;
 }

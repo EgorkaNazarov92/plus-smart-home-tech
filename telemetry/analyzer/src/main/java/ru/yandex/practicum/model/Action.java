@@ -1,11 +1,10 @@
 package ru.yandex.practicum.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.yandex.practicum.model.types.ActionType;
+
+import java.util.List;
 
 @Entity
 @Table(name = "actions")
@@ -23,9 +22,7 @@ public class Action {
 
 	private Integer value;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Sensor sensor;
-
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Scenario scenario;
+	@OneToMany(mappedBy = "action")
+	@ToString.Exclude
+	private List<ScenarioAction> scenarioActions;
 }
