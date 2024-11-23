@@ -62,7 +62,7 @@ public class AggregationStarter {
 			log.error("Ошибка во время обработки событий от датчиков", e);
 		} finally {
 			log.info("Закрываем консьюмер");
-			consumer.close();
+			consumer.wakeup();
 			log.info("Закрываем продюсер");
 			producer.close();
 		}

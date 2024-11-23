@@ -41,7 +41,7 @@ public class SnapshotProcessor {
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {
-			consumer.close();
+			consumer.wakeup();
 		}
 	}
 }
