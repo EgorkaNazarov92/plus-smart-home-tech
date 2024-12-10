@@ -1,3 +1,5 @@
 spring:
-  kafka:
-      bootstrapServer: localhost:9092
+  application:
+    name: collector
+  config:
+    import: configserver:http://localhost:8888
