@@ -22,15 +22,15 @@ import java.util.Properties;
 @Configuration
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class KafkaConfig {
-	@Value("${spring.kafka.bootstrapServer}")
+	@Value("${aggregator.kafka.bootstrapServer}")
 	String bootstrapServer;
-	@Value("${spring.kafka.group.id}")
+	@Value("${aggregator.kafka.group.id}")
 	String groupId;
 	@Getter
-	@Value("${spring.kafka.topic.in}")
+	@Value("${aggregator.kafka.topic.in}")
 	String topicIn;
 	@Getter
-	@Value("${spring.kafka.topic.out}")
+	@Value("${aggregator.kafka.topic.out}")
 	String topicOut;
 
 	@Bean
