@@ -49,6 +49,7 @@ public class CartServiceImpl implements CartService {
 		return cartMapper.toShoppingCartDto(cartRepository.save(shoppingCart));
 	}
 
+	@Transactional
 	@Override
 	public void deleteUserCart(String username) {
 		chechUser(username);
@@ -57,6 +58,7 @@ public class CartServiceImpl implements CartService {
 		cartRepository.save(shoppingCart);
 	}
 
+	@Transactional
 	@Override
 	public ShoppingCartDto changeCart(String username, Map<String, Long> items) {
 		chechUser(username);
@@ -67,6 +69,7 @@ public class CartServiceImpl implements CartService {
 		return cartMapper.toShoppingCartDto(cartRepository.save(shoppingCart));
 	}
 
+	@Transactional
 	@Override
 	public ShoppingCartDto changeCountProductInCart(String username, ChangeProductQuantityRequest request) {
 		chechUser(username);

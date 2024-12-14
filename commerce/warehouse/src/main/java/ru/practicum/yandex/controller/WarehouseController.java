@@ -12,7 +12,7 @@ import ru.yandex.practicum.dto.*;
 @Validated
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/warehouse/address")
+@RequestMapping("/api/v1/warehouse")
 public class WarehouseController {
 	private final WarehouseService warehouseService;
 

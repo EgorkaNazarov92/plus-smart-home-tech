@@ -14,7 +14,7 @@ import java.util.Map;
 @Builder
 public class ShoppingCart {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "shopping_cart_id", nullable = false)
 	private String shoppingCartId;
 
@@ -25,7 +25,7 @@ public class ShoppingCart {
 	private boolean cartState;
 
 	@ElementCollection
-	@CollectionTable(name = "shopping_cart_products", joinColumns = @JoinColumn(name = "shopping_cart_id"))
+	@CollectionTable(name = "shopping_cart_products", joinColumns = @JoinColumn(name = "cart_id"))
 	@MapKeyColumn(name = "product_id")
 	@Column(name = "quantity")
 	Map<String, Long> products;

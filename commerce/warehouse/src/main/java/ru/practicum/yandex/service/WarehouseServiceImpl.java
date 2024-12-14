@@ -24,6 +24,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 	private final WarehouseRepository warehouseRepository;
 	private final WarehouseMapper warehouseMapper;
 
+	@Transactional
 	@Override
 	public void createProductToWarehouse(NewProductInWarehouseRequest request) {
 		Optional<WarehouseProduct> product = getProduct(request.getProductId());
@@ -61,6 +62,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 				.build();
 	}
 
+	@Transactional
 	@Override
 	public void addProductToWarehouse(AddProductToWarehouseRequest request) {
 		Optional<WarehouseProduct> product = getProduct(request.getProductId());

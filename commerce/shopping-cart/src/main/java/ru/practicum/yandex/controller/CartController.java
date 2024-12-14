@@ -30,7 +30,7 @@ public class CartController {
 	@ResponseStatus(HttpStatus.OK)
 	@PutMapping
 	public ShoppingCartDto addProductToCart(@RequestParam String username,
-											@RequestParam Map<String, Long> items) {
+											@RequestBody Map<String, Long> items) {
 		log.info("Добавить товары в корзину username --> {}, items --> {}", username, items);
 		return cartService.addProductToCart(username, items);
 	}
@@ -45,7 +45,7 @@ public class CartController {
 	@ResponseStatus(HttpStatus.OK)
 	@PostMapping("/remove")
 	public ShoppingCartDto changeCart(@RequestParam String username,
-									  @RequestParam Map<String, Long> items) {
+									  @RequestBody Map<String, Long> items) {
 		log.info("Изменить состав товаров в корзине username --> {}, items --> {}", username, items);
 		return cartService.changeCart(username, items);
 	}
@@ -53,7 +53,7 @@ public class CartController {
 	@ResponseStatus(HttpStatus.OK)
 	@PostMapping("/change-quantity")
 	public ShoppingCartDto changeCountProductInCart(@RequestParam String username,
-													ChangeProductQuantityRequest request) {
+													@RequestBody ChangeProductQuantityRequest request) {
 		log.info("Изменить количество товаров в корзине username --> {}, request --> {}", username, request);
 		return cartService.changeCountProductInCart(username, request);
 	}

@@ -10,6 +10,4 @@ public interface WarehouseService {
 	void addProductToWarehouse(AddProductToWarehouseRequest request);
 
 	AddressDto getWareHouseAddress();
-
-	BookedProductsDto bookedProducts(ShoppingCartDto shoppingCartDto);
 }

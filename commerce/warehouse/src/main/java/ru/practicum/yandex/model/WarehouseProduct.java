@@ -1,6 +1,9 @@
 package ru.practicum.yandex.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 
 @Entity
@@ -24,7 +27,5 @@ public class WarehouseProduct {
 	@Column(name = "weight", nullable = false)
 	private double weight;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "product_id", referencedColumnName = "product_id")
 	private Dimension dimension;
 }
