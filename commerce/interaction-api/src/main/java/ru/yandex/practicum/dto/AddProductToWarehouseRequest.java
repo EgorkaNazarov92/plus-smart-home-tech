@@ -16,5 +16,5 @@ public class AddProductToWarehouseRequest {
 
 	@NotBlank
 	@Min(value = 1, message = "quantity should not be less than 1")
-	private Long quantity;
+	private int quantity;
 }
