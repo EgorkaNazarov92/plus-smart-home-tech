@@ -41,7 +41,7 @@ public class StoreServiceImpl implements StoreService {
 	public ProductDto createNewProduct(ProductDto productDto) {
 		if (storeRepository.getByProductId(productDto.getProductId()).isPresent())
 			throw new SpecifiedProductAlreadyInWarehouseException("Такой продукт уже есть БД");
-		Product product = productMapper.productDtoToProduc(productDto);
+		Product product = productMapper.productDtoToProduct(productDto);
 		return productMapper.productToProductDto(storeRepository.save(product));
 	}
 
@@ -50,7 +50,7 @@ public class StoreServiceImpl implements StoreService {
 	public ProductDto updateProduct(ProductDto productDto) {
 		getProduct(productDto.getProductId());
 		return productMapper.productToProductDto(
-				storeRepository.save(productMapper.productDtoToProduc(productDto)));
+				storeRepository.save(productMapper.productDtoToProduct(productDto)));
 	}
 
 	@Transactional

@@ -15,7 +15,7 @@ import ru.yandex.practicum.types.QuantityState;
 @Builder
 public class Product {
 	@Id
-	@Column(name = "product_id", nullable = false)
+	@Column(name = "order_id", nullable = false)
 	private String productId;
 
 	@Column(name = "product_name", nullable = false)
