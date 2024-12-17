@@ -1,4 +1,4 @@
-package ru.yandex.practicum.shoppingCart;
+package ru.yandex.practicum.shoppingcart;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

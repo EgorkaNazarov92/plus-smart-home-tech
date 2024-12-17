@@ -9,7 +9,7 @@ import ru.practicum.yandex.model.Order;
 import ru.practicum.yandex.repository.OrderRepository;
 import ru.yandex.practicum.dto.*;
 import ru.yandex.practicum.exception.NoOrderFoundException;
-import ru.yandex.practicum.shoppingCart.ShoppingCartClient;
+import ru.yandex.practicum.shoppingcart.ShoppingCartClient;
 import ru.yandex.practicum.types.OrderState;
 import ru.yandex.practicum.warehouse.WarehouseClient;
 
