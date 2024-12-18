@@ -12,4 +12,17 @@ public interface OrderClient {
 
 	@PostMapping("/payment/failed")
 	OrderDto paymentOrderFailed(@RequestBody String orderId);
+
+	@PostMapping("/completed")
+	OrderDto completedOrder(@RequestBody String orderId);
+
+	@PostMapping("/delivery")
+	OrderDto deliveryOrder(@RequestBody String orderId);
+
+
+	@PostMapping("/delivery/failed")
+	OrderDto deliveryOrderFailed(@RequestBody String orderId);
+
+	@PostMapping("/assembly")
+	OrderDto assemblyOrder(@RequestBody String orderId);
 }

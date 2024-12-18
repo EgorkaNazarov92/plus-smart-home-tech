@@ -7,8 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.yandex.mapper.OrderMapper;
 import ru.practicum.yandex.model.Order;
 import ru.practicum.yandex.repository.OrderRepository;
+import ru.yandex.practicum.delivery.DeliveryClient;
 import ru.yandex.practicum.dto.*;
 import ru.yandex.practicum.exception.NoOrderFoundException;
+import ru.yandex.practicum.payment.PaymentClient;
 import ru.yandex.practicum.shoppingcart.ShoppingCartClient;
 import ru.yandex.practicum.types.OrderState;
 import ru.yandex.practicum.warehouse.WarehouseClient;
@@ -25,6 +27,8 @@ public class OrderServiceImpl implements OrderService {
 	private final OrderMapper orderMapper;
 	private final ShoppingCartClient cartClient;
 	private final WarehouseClient warehouseClient;
+	private final DeliveryClient deliveryClient;
+	private final PaymentClient paymentClient;
 
 	@Transactional(readOnly = true)
 	@Override
@@ -40,10 +44,11 @@ public class OrderServiceImpl implements OrderService {
 				.products(request.getShoppingCart().getProducts())
 				.state(OrderState.NEW)
 				.build();
+		order = orderRepository.save(order);
 
-		BookedProductsDto bookedProductsDto = warehouseClient.checkAvailableProducts(
-				ShoppingCartDto.builder()
-						.shoppingCartId(request.getShoppingCart().getShoppingCartId())
+		BookedProductsDto bookedProductsDto = warehouseClient.bookProducts(
+				AssemblyProductsForOrderRequest.builder()
+						.orderId(order.getOrderId())
 						.products(request.getShoppingCart().getProducts())
 						.build()
 		);
@@ -51,12 +56,23 @@ public class OrderServiceImpl implements OrderService {
 		order.setDeliveryWeight(bookedProductsDto.getDeliveryWeight());
 		order.setDeliveryVolume(bookedProductsDto.getDeliveryVolume());
 		order.setFragile(bookedProductsDto.getFragile());
+
+		DeliveryDto deliveryDto = DeliveryDto.builder()
+				.orderId(order.getOrderId())
+				.fromAddress(warehouseClient.getWareHouseAddress())
+				.toAddress(request.getDeliveryAddress())
+				.build();
+		order.setDeliveryId(deliveryClient.createNewDelivery(deliveryDto).getDeliveryId());
+		paymentClient.addPayment(orderMapper.toOrderDto(order));
 		return orderMapper.toOrderDto(orderRepository.save(order));
 	}
 
 	@Override
 	public OrderDto returnOrder(ProductReturnRequest request) {
-		return null;
+		Order order = getOrder(request.getOrderId());
+		warehouseClient.returnProductsToWarehouse(request.getProducts());
+		order.setState(OrderState.PRODUCT_RETURNED);
+		return orderMapper.toOrderDto(orderRepository.save(order));
 	}
 
 	@Override
@@ -96,12 +112,16 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public OrderDto calculateTotalOrder(String orderId) {
-		return null;
+		Order order = getOrder(orderId);
+		order.setTotalPrice(paymentClient.getTotalCost(orderMapper.toOrderDto(order)));
+		return orderMapper.toOrderDto(orderRepository.save(order));
 	}
 
 	@Override
 	public OrderDto calculateDeliveryOrder(String orderId) {
-		return null;
+		Order order = getOrder(orderId);
+		order.setDeliveryPrice(deliveryClient.getCostDelivery(orderMapper.toOrderDto(order)));
+		return orderMapper.toOrderDto(orderRepository.save(order));
 	}
 
 	@Override

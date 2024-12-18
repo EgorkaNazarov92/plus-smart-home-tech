@@ -98,7 +98,7 @@ public class OrderController {
 	}
 
 	@ResponseStatus(HttpStatus.OK)
-	@PostMapping("/assembly.афшдув")
+	@PostMapping("/assembly/failed")
 	public OrderDto assemblyOrderFailed(@RequestBody String orderId) {
 		log.info("Сборка заказа с ошибкой, orderId --> {}", orderId);
 		return orderService.assemblyOrderFailed(orderId);
