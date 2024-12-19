@@ -13,4 +13,7 @@ public interface PaymentClient {
 
 	@PostMapping("/totalCost")
 	double getTotalCost(@RequestBody OrderDto orderDto);
+
+	@PostMapping("/productCost")
+	double getProductsCost(@RequestBody OrderDto orderDto);
 }
