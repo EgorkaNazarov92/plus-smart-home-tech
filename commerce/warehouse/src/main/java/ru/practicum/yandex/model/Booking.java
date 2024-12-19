@@ -6,7 +6,7 @@ import lombok.*;
 import java.util.Map;
 
 @Entity
-@Table(name = "warehouse_product")
+@Table(name = "bookings")
 @Getter
 @Setter
 @NoArgsConstructor

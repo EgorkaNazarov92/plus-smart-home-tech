@@ -17,11 +17,11 @@ public class Delivery {
 	@Column(name = "delivery_id", nullable = false)
 	private String deliveryId;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "from_address_id", referencedColumnName = "address_id")
 	private Address fromAddress;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "to_address_id", referencedColumnName = "address_id")
 	private Address toAddress;
 

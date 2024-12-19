@@ -62,7 +62,8 @@ public class OrderServiceImpl implements OrderService {
 				.fromAddress(warehouseClient.getWareHouseAddress())
 				.toAddress(request.getDeliveryAddress())
 				.build();
-		order.setDeliveryId(deliveryClient.createNewDelivery(deliveryDto).getDeliveryId());
+		deliveryDto = deliveryClient.createNewDelivery(deliveryDto);
+		order.setDeliveryId(deliveryDto.getDeliveryId());
 		paymentClient.addPayment(orderMapper.toOrderDto(order));
 		return orderMapper.toOrderDto(orderRepository.save(order));
 	}

@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS bookings (
 );
 
 CREATE TABLE IF NOT EXISTS booking_products (
-    order_id VARCHAR REFERENCES bookings(order_id) ON DELETE CASCADE PRIMARY KEY,
+    order_id VARCHAR REFERENCES bookings(order_id) ON DELETE CASCADE,
     product_id VARCHAR,
     quantity   INTEGER
 );

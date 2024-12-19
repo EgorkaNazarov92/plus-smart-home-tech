@@ -23,7 +23,7 @@ import java.util.Random;
 
 @Service
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class WarehouseServiceImpl implements WarehouseService {
 	private final WarehouseRepository warehouseRepository;
@@ -31,7 +31,6 @@ public class WarehouseServiceImpl implements WarehouseService {
 	private final BookingRepository bookingRepository;
 	private final BookingMapper bookingMapper;
 
-	@Transactional
 	@Override
 	public void createProductToWarehouse(NewProductInWarehouseRequest request) {
 		Optional<WarehouseProduct> product = getProduct(request.getProductId());
@@ -40,6 +39,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 		warehouseRepository.save(warehouseMapper.toWarehouse(request));
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public BookedProductsDto checkAvailableProducts(ShoppingCartDto shoppingCartDto) {
 		Map<String, Long> products = shoppingCartDto.getProducts();
@@ -69,7 +69,6 @@ public class WarehouseServiceImpl implements WarehouseService {
 				.build();
 	}
 
-	@Transactional
 	@Override
 	public void addProductToWarehouse(AddProductToWarehouseRequest request) {
 		Optional<WarehouseProduct> product = getProduct(request.getProductId());
@@ -80,6 +79,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 		warehouseRepository.save(pr);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public AddressDto getWareHouseAddress() {
 		return AddressDto.builder()

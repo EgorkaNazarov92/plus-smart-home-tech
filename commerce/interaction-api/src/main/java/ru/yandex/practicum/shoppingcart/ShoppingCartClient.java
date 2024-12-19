@@ -8,6 +8,6 @@ import ru.yandex.practicum.dto.ShoppingCartDto;
 
 @FeignClient(name = "shopping-cart", path = "/api/v1/shopping-cart")
 public interface ShoppingCartClient {
-	@GetMapping("/check")
+	@GetMapping
 	ShoppingCartDto getShoppingCart(@RequestParam String username);
 }
