@@ -45,7 +45,7 @@ public class StoreController {
 
 	@ResponseStatus(HttpStatus.OK)
 	@PostMapping("/removeProductFromStore")
-	public boolean removeProduct(@RequestParam String productId) {
+	public boolean removeProduct(@RequestBody String productId) {
 		log.info("Удалить товар из ассортимента магазина, productId --> {}", productId);
 		return storeService.removeProduct(productId);
 	}

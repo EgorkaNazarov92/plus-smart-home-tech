@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     order_id VARCHAR PRIMARY KEY,
     fragile    BOOLEAN,
     delivery_volume  double precision NOT NULL,
-    delivery_weight  double precision NOT NULL
+    delivery_weight  double precision NOT NULL,
     delivery_id VARCHAR
 );
 

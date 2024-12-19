@@ -76,7 +76,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 		if (product.isEmpty())
 			throw new NoSpecifiedProductInWarehouseException("Нет такого товара");
 		WarehouseProduct pr = product.get();
-		pr.setQuantity(pr.getQuantity() + request.getQuantity());
+		pr.setQuantity((pr.getQuantity() == null ? 0 : pr.getQuantity()) + request.getQuantity());
 		warehouseRepository.save(pr);
 	}
 
