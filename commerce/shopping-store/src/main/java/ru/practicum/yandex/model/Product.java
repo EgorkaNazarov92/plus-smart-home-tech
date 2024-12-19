@@ -15,6 +15,7 @@ import ru.yandex.practicum.types.QuantityState;
 @Builder
 public class Product {
 	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "product_id", nullable = false)
 	private String productId;
 

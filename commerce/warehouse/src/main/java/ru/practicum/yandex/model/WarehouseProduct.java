@@ -19,7 +19,7 @@ public class WarehouseProduct {
 	private String productId;
 
 	@Column(name = "quantity", nullable = false)
-	private int quantity;
+	private Long quantity;
 
 	@Column(name = "fragile", nullable = false)
 	private boolean fragile;
